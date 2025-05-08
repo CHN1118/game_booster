@@ -2,7 +2,7 @@ from PyQt5.QtWidgets import (
     QWidget, QLabel, QPushButton, QVBoxLayout,
     QComboBox, QLineEdit, QTextEdit, QProgressBar, QHBoxLayout
 )
-from PyQt5.QtGui import QPixmap, QPainter,  QPainterPath
+from PyQt5.QtGui import QPixmap, QPainter, QPainterPath, QIcon
 from PyQt5.QtCore import QTimer, QDateTime, Qt
 from utils import load_config, save_config
 import os

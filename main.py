@@ -1,4 +1,6 @@
 import sys
+
+from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QApplication, QStackedWidget
 from ui_main import MainWindow
 from ui_settings import SettingsWindow
@@ -7,6 +9,13 @@ if __name__ == "__main__":
     app = QApplication(sys.argv)
 
     stacked = QStackedWidget() # 创建堆栈窗口
+    stacked.setWindowIcon(QIcon("./app_icon.ico"))  # 清除窗口图标
+    stacked.setWindowTitle("助力助手")
+    stacked.setStyleSheet("""
+        background-color: "#282c34";
+        color: white;
+        font-size: 14px;
+    """)
     main_window = MainWindow(stacked) # 创建主界面
     settings_window = SettingsWindow(stacked) # 创建设置界面
 
