@@ -1,29 +1,47 @@
 import sys
-
 from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QApplication, QStackedWidget
+from PyQt5.QtWidgets import QApplication, QMainWindow, QStackedWidget, QDialog
+
 from ui_main import MainWindow
 from ui_settings import SettingsWindow
+from password_dialog import PasswordDialog
+
+
+class MainApp(QMainWindow):
+    def __init__(self):
+        super().__init__()
+
+        self.setWindowTitle("小橙子")
+        self.setWindowIcon(QIcon("./app_icon.ico"))  # 设置任务栏图标
+        self.setFixedSize(600, 500)
+
+        # 创建 QStackedWidget 并添加页面
+        self.stack = QStackedWidget()
+        self.setCentralWidget(self.stack)
+
+        main_window = MainWindow(self.stack)
+        settings_window = SettingsWindow(self.stack)
+
+        self.stack.addWidget(main_window)
+        self.stack.addWidget(settings_window)
+        self.stack.setCurrentIndex(0)
+
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
 
-    stacked = QStackedWidget() # 创建堆栈窗口
-    stacked.setWindowIcon(QIcon("./app_icon.ico"))  # 清除窗口图标
-    stacked.setWindowTitle("助力助手")
-    stacked.setStyleSheet("""
-        background-color: "#282c34";
-        color: white;
-        font-size: 14px;
-    """)
-    main_window = MainWindow(stacked) # 创建主界面
-    settings_window = SettingsWindow(stacked) # 创建设置界面
+    # 设置应用程序图标（双保险）
+    icon = QIcon("./app_icon.ico")
+    print(icon.isNull())  # False 表示图标已加载
+    app.setWindowIcon(icon)
 
-    stacked.addWidget(main_window)  # 添加主界面到堆栈窗口
-    stacked.addWidget(settings_window) # 添加设置界面到堆栈窗口
+    # 密码验证弹窗
+    # dialog = PasswordDialog()
+    # if dialog.exec_() != QDialog.Accepted:
+    #     sys.exit()
 
-    stacked.setFixedSize(600, 500) # 设置窗口大小
-    stacked.setCurrentIndex(0)  # 显示主界面
-    stacked.show() # 显示窗口
+    # 启动主程序窗口
+    window = MainApp()
+    window.show()
 
-    sys.exit(app.exec_()) # 运行程序
+    sys.exit(app.exec_())
