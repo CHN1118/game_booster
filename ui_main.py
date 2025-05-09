@@ -2,11 +2,12 @@ from PyQt5.QtWidgets import (
     QWidget, QLabel, QPushButton, QVBoxLayout,
     QComboBox, QLineEdit, QTextEdit, QProgressBar, QHBoxLayout
 )
-from PyQt5.QtGui import QPixmap, QPainter, QPainterPath, QIcon
+from PyQt5.QtGui import QPixmap, QPainter, QPainterPath, QIcon, QFont
 from PyQt5.QtCore import QTimer, QDateTime, Qt
+
+from resources import resource_path
 from utils import load_config, save_config
-import os
-import sys
+
 
 class MainWindow(QWidget):
     def __init__(self, stacked_widget):
@@ -15,11 +16,23 @@ class MainWindow(QWidget):
         self.config = load_config()
         self.current_game = None
 
+        # 设置全局字体
+        font = QFont("Microsoft YaHei", 10)  # 使用微软雅黑，10号字
+        self.setFont(font)
+
         # 顶部控件
         top_layout = QHBoxLayout()
+        top_layout.setContentsMargins(0, 0, 0, 15)  # 增加底部间距
         self.game_selector = QComboBox()
-        self.setting_btn = QPushButton("设置 ⚙")
+        self.game_selector.setFixedWidth(200)
+        self.setting_btn = QPushButton("⚙")
+        self.setting_btn.setStyleSheet("""
+            background-color: transparent;
+            max-width: 34px;
+            font-size: 18px;
+        """)
         top_layout.addWidget(self.game_selector)
+        top_layout.setAlignment(Qt.AlignRight)
         top_layout.addWidget(self.setting_btn)
 
         self.setting_btn.clicked.connect(self.open_settings)
@@ -30,23 +43,30 @@ class MainWindow(QWidget):
         self.icon_label.setFixedSize(120, 120)
         self.icon_label.setAlignment(Qt.AlignCenter)
 
-        self.game_name_label = QLabel("游戏名称")
-        self.game_name_label.setStyleSheet("font-size: 18px; font-weight: bold;")
+        self.game_name_label = QLabel("游戏名称：未选择")
 
-        icon_layout = QHBoxLayout()
-        icon_layout.addWidget(self.icon_label)
-        icon_layout.addWidget(self.game_name_label)
-        icon_layout.setAlignment(Qt.AlignLeft)
-        icon_layout.setSpacing(20)
+        # 使用垂直布局居中图标和文字
+        game_info_layout = QVBoxLayout()
+        game_info_layout.addWidget(self.icon_label, alignment=Qt.AlignCenter)
+        game_info_layout.addWidget(self.game_name_label, alignment=Qt.AlignCenter)
+        game_info_layout.setSpacing(15)
+
+        # 包装在一个 QWidget 里以便加入主布局
+        game_info_widget = QWidget()
+        game_info_widget.setLayout(game_info_layout)
 
         # ID 输入
+        self.id_label = QLabel("玩家ID:")
+        self.id_label.setStyleSheet("font-size: 14px;")
         self.id_input = QLineEdit()
         self.id_input.setPlaceholderText("请输入玩家ID")
         self.boost_btn = QPushButton("申请助力")
 
         # 名额 + 进度条
         self.quota_label = QLabel("剩余名额: 0")
+        self.quota_label.setStyleSheet("font-size: 14px;")
         self.progress = QProgressBar()
+        self.progress.setTextVisible(False)  # 不显示百分比文字
 
         # 日志输出
         self.log_box = QTextEdit()
@@ -54,7 +74,8 @@ class MainWindow(QWidget):
 
         layout = QVBoxLayout()
         layout.addLayout(top_layout)
-        layout.addLayout(icon_layout)
+        layout.addWidget(game_info_widget)
+        layout.addWidget(self.id_label)
         layout.addWidget(self.id_input)
         layout.addWidget(self.boost_btn)
         layout.addWidget(self.quota_label)
@@ -64,7 +85,6 @@ class MainWindow(QWidget):
         self.setLayout(layout)
         self.populate_games()
         self.boost_btn.clicked.connect(self.start_boost)
-
     def open_settings(self):
         self.stacked_widget.setCurrentIndex(1) # 显示设置界面
         self.stacked_widget.widget(1).load_config_data()  # 刷新游戏列表
@@ -97,7 +117,9 @@ class MainWindow(QWidget):
         self.quota_label.setText(f"剩余名额: {self.current_game['quota_number']}")
 
     def load_image(self, image_name):
-        path = resource_path(image_name)
+        # path = resource_path(image_name)
+        path = resource_path(f'images/{image_name}')
+        print(path)
         pix = QPixmap(path).scaled(120, 120, Qt.KeepAspectRatioByExpanding, Qt.SmoothTransformation)
 
         rounded = QPixmap(pix.size())
@@ -119,12 +141,12 @@ class MainWindow(QWidget):
             return
 
         if self.current_game["quota_number"] <= 0:
-            now = QDateTime.currentDateTime().toString("yyyy/MM/dd hh:mm:ss")
-            self.log_box.append(f'<span style="color:red">{now} 名额已满，无法助力！</span>')
+            now = QDateTime.currentDateTime().toString("yyyy-MM-dd hh:mm:ss")
+            self.log_box.append(f'<span style="color:red">{now} ---助力名额已满---</span>')
             return
 
         self.progress.setValue(0)
-        self.log_box.append("开始助力中...")
+        # self.log_box.append("开始助力中...")
         QTimer.singleShot(200, lambda: self.progress.setValue(25))
         QTimer.singleShot(400, lambda: self.progress.setValue(50))
         QTimer.singleShot(600, lambda: self.progress.setValue(75))
@@ -133,18 +155,12 @@ class MainWindow(QWidget):
 
     def finish_boost(self, player_id):
         prefix = self.config.get("congrats_prefix", "恭喜玩家")
-        now = QDateTime.currentDateTime().toString("yyyy/MM/dd hh:mm:ss")
+        now = QDateTime.currentDateTime().toString("yyyy-MM-dd hh:mm:ss")
         for line in self.current_game["text"]:
-            self.log_box.append(f"{now} {prefix}:{player_id} 助力成功:{line}")
+            self.log_box.append(f'<span style="color:#23db76">  {now} ---{prefix} </span><span style="color:#23db76">【{player_id}】</span><span style="color:#23db76"> 助力成功【{line}】---</span>')
 
         self.current_game["quota_number"] -= 1
         self.quota_label.setText(f"剩余名额: {self.current_game['quota_number']}")
         self.progress.setValue(0)  # ✅ 清空进度条
         save_config(self.config)
 
-
-def resource_path(relative_path):
-    """打包后的路径兼容"""
-    if hasattr(sys, '_MEIPASS'):
-        return os.path.join(sys._MEIPASS, 'images', relative_path)
-    return os.path.join('images', relative_path)

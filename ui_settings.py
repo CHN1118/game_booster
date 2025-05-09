@@ -1,3 +1,5 @@
+import json
+
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QTextEdit, QPushButton
 from utils import load_config, save_config
 
@@ -12,7 +14,7 @@ class SettingsWindow(QWidget):
         layout.addWidget(self.save_btn)
         self.setLayout(layout)
 
-        self.config = load_config()
+        self.config = load_config()  # 加载配置
         self.editor.setText(self.to_pretty_json(self.config))
         self.save_btn.clicked.connect(self.save_and_back)
 
@@ -25,12 +27,11 @@ class SettingsWindow(QWidget):
         return json.dumps(config, ensure_ascii=False, indent=4)
 
     def save_and_back(self):
-        import json
         try:
-            config = json.loads(self.editor.toPlainText()) # 尝试解析 JSON
-            save_config(config) # 保存配置
-            self.stacked_widget.widget(0).config = config # 更新主界面配置
-            self.stacked_widget.widget(0).populate_games() # 刷新游戏列表
-            self.stacked_widget.setCurrentIndex(0) # 回到主界面
+            config = json.loads(self.editor.toPlainText())  # 尝试解析 JSON
+            save_config(config)  # 保存配置
+            self.stacked_widget.widget(0).config = config  # 更新主界面配置
+            self.stacked_widget.widget(0).populate_games()  # 刷新游戏列表
+            self.stacked_widget.setCurrentIndex(0)  # 回到主界面
         except json.JSONDecodeError:
             self.editor.setPlainText("JSON 格式错误，请检查后再保存")

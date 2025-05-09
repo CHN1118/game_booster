@@ -1,4 +1,6 @@
 import sys
+
+from PyQt5 import QtCore
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QApplication, QMainWindow, QStackedWidget, QDialog
 
@@ -11,9 +13,18 @@ class MainApp(QMainWindow):
     def __init__(self):
         super().__init__()
 
-        self.setWindowTitle("小橙子")
+        self.setWindowTitle("助力助手")
         self.setWindowIcon(QIcon("./app_icon.ico"))  # 设置任务栏图标
-        self.setFixedSize(600, 500)
+
+        # 移除固定大小设置，改为设置初始大小
+        self.resize(800, 600)  # 初始大小
+
+        # 允许窗口最小化和最大化
+        self.setMinimumSize(800, 600)  # 设置最小尺寸（可选）
+        # self.setMaximumSize(800, 600)  # 如果要限制最大尺寸可以取消注释
+
+        # 启用窗口大小调整（默认就是启用的，这行可以省略）
+        self.setWindowFlags(self.windowFlags() & ~QtCore.Qt.MSWindowsFixedSizeDialogHint)
 
         # 创建 QStackedWidget 并添加页面
         self.stack = QStackedWidget()
