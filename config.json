@@ -1,18 +1,27 @@
 {
     "games": [
         {
-            "game": "上个车",
+            "game": "敲个锤子-管不住我",
             "image": "qiaogechuizi.png",
-            "quota_number": 0,
+            "quota_number": 3,
             "text": [
                 "通关50关卡开启",
                 "AI关卡已申请"
             ]
         },
         {
-            "game": "大锤子",
-            "image": "qiaogechuizi.png",
-            "quota_number": 12,
+            "game": "小橙子",
+            "image": "108392950.png",
+            "quota_number": 13,
+            "text": [
+                "通关50关卡开启",
+                "AI关卡已申请"
+            ]
+        },
+        {
+            "game": "小橙子",
+            "image": "108392950.png",
+            "quota_number": 13,
             "text": [
                 "通关50关卡开启",
                 "AI关卡已申请"

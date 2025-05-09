@@ -11,7 +11,7 @@ class MainApp(QMainWindow):
     def __init__(self):
         super().__init__()
 
-        self.setWindowTitle("小橙子")
+        self.setWindowTitle("助力助手")
         self.setWindowIcon(QIcon("./app_icon.ico"))  # 设置任务栏图标
         self.setFixedSize(600, 500)
 
