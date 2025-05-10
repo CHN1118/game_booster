@@ -19,7 +19,9 @@ class MainWindow(QWidget):
 
         # 顶部控件
         top_layout = QHBoxLayout()
+        top_layout.addStretch()  # 添加弹簧推到右边
         self.game_selector = QComboBox()
+        self.game_selector.setMaximumWidth(200)
         self.setting_btn = QPushButton("设置 ⚙")
         top_layout.addWidget(self.game_selector)
         top_layout.addWidget(self.setting_btn)
@@ -29,7 +31,7 @@ class MainWindow(QWidget):
 
         # 图标和游戏名区域
         self.icon_label = QLabel()
-        self.icon_label.setFixedSize(120, 120)
+        self.icon_label.setFixedSize(200, 200)
         self.icon_label.setAlignment(Qt.AlignCenter)
 
         self.game_name_label = QLabel("游戏名称：未选择")
@@ -115,7 +117,7 @@ class MainWindow(QWidget):
         # path = resource_path(image_name)
         path = resource_path(f'images/{image_name}')
         print(path)
-        pix = QPixmap(path).scaled(120, 120, Qt.KeepAspectRatioByExpanding, Qt.SmoothTransformation)
+        pix = QPixmap(path).scaled(200, 200, Qt.KeepAspectRatioByExpanding, Qt.SmoothTransformation)
 
         rounded = QPixmap(pix.size())
         rounded.fill(Qt.transparent)  # ✅ 关键点：背景透明，保留圆角
@@ -123,7 +125,7 @@ class MainWindow(QWidget):
         painter = QPainter(rounded)
         painter.setRenderHint(QPainter.Antialiasing)
         clip_path = QPainterPath()
-        clip_path.addRoundedRect(0, 0, 120, 120, 10, 10)  # ✅ 圆角10
+        clip_path.addRoundedRect(0, 0, 200, 200, 10, 10)  # ✅ 圆角10
         painter.setClipPath(clip_path)
         painter.drawPixmap(0, 0, pix)
         painter.end()
